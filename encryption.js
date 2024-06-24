@@ -6,16 +6,17 @@ function encryptText() {
   const iv = CryptoJS.lib.WordArray.random(16);
 
   // Encrypt using AES-256 (strong algorithm) with CBC mode
-  const encrypted = CryptoJS.AES.encrypt(inputText, secretKey, {
+  const encrypted = CryptoJS.AES.encrypt(inputText, CryptoJS.enc.Utf8.parse(secretKey), {
     iv: iv,
     mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
   });
 
   // Convert IV to base64 for better storage
   const ivBase64 = iv.toString(CryptoJS.enc.Base64);
 
   // Include the IV in the output for correct decryption
-  document.getElementById("outputText").value = encrypted + ":" + ivBase64;
+  document.getElementById("outputText").value = encrypted.toString() + ":" + ivBase64;
 }
 
 function decryptText() {
@@ -36,9 +37,10 @@ function decryptText() {
   const iv = CryptoJS.enc.Base64.parse(ivBase64);
 
   // Decrypt using AES-256 with CBC mode
-  const decrypted = CryptoJS.AES.decrypt(encrypted, secretKey, {
+  const decrypted = CryptoJS.AES.decrypt(encrypted, CryptoJS.enc.Utf8.parse(secretKey), {
     iv: iv,
     mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
   });
 
   document.getElementById("outputText").value = decrypted.toString(CryptoJS.enc.Utf8);
